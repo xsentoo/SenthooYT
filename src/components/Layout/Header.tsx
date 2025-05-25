@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           
           <Link to="/" className="flex items-center">
             <Youtube size={28} className="mr-1 text-red-600" />
-            <span className="text-xl font-semibold">Senthoo</span>
+            <span className="text-xl font-semibold">YouClone</span>
           </Link>
         </div>
         

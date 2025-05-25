@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { SearchResponse, VideoResponse, Video } from '../types';
 
-const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
-const BASE_URL = 'https://www.googleapis.com/youtube/v3';
+// Nouvelle clé API intégrée directement
+const API_KEY = 'AIzaSyC6rkJxIA89bz2eWHCxePBRIAgVaPso_KA';
 
 /**
  * Search videos using the YouTube API
@@ -14,7 +14,7 @@ export const searchVideos = async (
   order = 'viewCount'
 ): Promise<SearchResponse> => {
   try {
-    const response = await axios.get(`${BASE_URL}/search`, {
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
         part: 'snippet',
         maxResults,
@@ -25,11 +25,11 @@ export const searchVideos = async (
         order,
       },
     });
-    
+
     return response.data;
-  } catch (error) {
-    console.error('Error searching videos:', error);
-    throw error;
+  } catch (error: any) {
+    console.error('Error searching videos:', error.response?.data || error.message);
+    throw new Error('Failed to fetch videos. Please try again.');
   }
 };
 
@@ -38,18 +38,18 @@ export const searchVideos = async (
  */
 export const getVideoDetails = async (videoIds: string[]): Promise<VideoResponse> => {
   try {
-    const response = await axios.get(`${BASE_URL}/videos`, {
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
         part: 'snippet,contentDetails,statistics',
         id: videoIds.join(','),
         key: API_KEY,
       },
     });
-    
+
     return response.data;
-  } catch (error) {
-    console.error('Error fetching video details:', error);
-    throw error;
+  } catch (error: any) {
+    console.error('Error fetching video details:', error.response?.data || error.message);
+    throw new Error('Failed to fetch video details.');
   }
 };
 
@@ -62,7 +62,7 @@ export const getPlaylistItems = async (
   pageToken = ''
 ): Promise<SearchResponse> => {
   try {
-    const response = await axios.get(`${BASE_URL}/playlistItems`, {
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/playlistItems', {
       params: {
         part: 'snippet',
         maxResults,
@@ -71,11 +71,11 @@ export const getPlaylistItems = async (
         pageToken: pageToken || undefined,
       },
     });
-    
+
     return response.data;
-  } catch (error) {
-    console.error('Error fetching playlist items:', error);
-    throw error;
+  } catch (error: any) {
+    console.error('Error fetching playlist items:', error.response?.data || error.message);
+    throw new Error('Failed to fetch playlist items.');
   }
 };
 
@@ -88,7 +88,7 @@ export const getTrendingVideos = async (
   regionCode = 'US'
 ): Promise<SearchResponse> => {
   try {
-    const response = await axios.get(`${BASE_URL}/videos`, {
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
         part: 'snippet',
         chart: 'mostPopular',
@@ -98,11 +98,11 @@ export const getTrendingVideos = async (
         pageToken: pageToken || undefined,
       },
     });
-    
+
     return response.data;
-  } catch (error) {
-    console.error('Error fetching trending videos:', error);
-    throw error;
+  } catch (error: any) {
+    console.error('Error fetching trending videos:', error.response?.data || error.message);
+    throw new Error('Failed to fetch trending videos.');
   }
 };
 
@@ -131,10 +131,9 @@ export const getRecentVideos = async (
   pageToken = ''
 ): Promise<SearchResponse> => {
   try {
-    // Search for popular videos sorted by view count
     return await searchVideos('', maxResults, pageToken, 'viewCount');
-  } catch (error) {
-    console.error('Error fetching popular videos:', error);
-    throw error;
+  } catch (error: any) {
+    console.error('Error fetching recent videos:', error.response?.data || error.message);
+    throw new Error('Failed to fetch recent videos.');
   }
 };
